@@ -1,18 +1,24 @@
 import THREE from '../third_party/three.js';
 
-function getWebGLRenderer() {
+function getWebGLRenderer(width = 800, height = 800) {
   const renderer = new THREE.WebGLRenderer({antialias: true});
-  renderer.setSize(800, 800);
+  renderer.setSize(width, height);
   const canvas = renderer.domElement;
-  canvas.style.width = '400px';
-  canvas.style.height = '400px';
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+
+  window.renderer = renderer;
+
   return renderer;
 }
 
 const renderer = getWebGLRenderer();
 
 function getCamera() {
-  return new THREE.PerspectiveCamera(35,1,.1,100);
+  const camera =  new THREE.PerspectiveCamera(35,1,.1,100);
+  window.camera = camera;
+
+  return camera;
 }
 
-export { renderer, getCamera };
+export { renderer, getWebGLRenderer, getCamera };

@@ -1,22 +1,46 @@
 import THREE from '../third_party/three.js';
-import {renderer, getCamera} from '../modules/three.js';
+import { getWebGLRenderer, getCamera} from '../modules/three.js';
+import Easings from '../modules/easings.js';
 
+const renderer = getWebGLRenderer(400,400);
 const canvas = renderer.domElement;
 const camera = getCamera();
 const scene = new THREE.Scene();
 const group = new THREE.Group();
 
-const material = new THREE.MeshStandardMaterial({color: 0xb70000,metalness: 0, roughness: 1});
+const material = new THREE.MeshStandardMaterial({color: 0xa42539,metalness: 0, roughness: 1});
 const geometry = new THREE.BoxBufferGeometry(1,1,1);
 const cube = new THREE.Mesh(geometry, material);
 cube.castShadow = cube.receiveShadow = true;
 group.add(cube);
-const cube2 = new THREE.Mesh(geometry, material);
-cube2.castShadow = cube2.receiveShadow = true;
+const cube2 = cube.clone();
+cube2.position.x = 1;
+cube2.position.z = -1;
 group.add(cube2);
-const cube3 = new THREE.Mesh(geometry, material);
-cube3.castShadow = cube3.receiveShadow = true;
+
+const cube3 = cube.clone();
+cube3.position.x = -1;
+cube3.position.z = 1;
 group.add(cube3);
+
+const cube4 = cube.clone();
+cube4.position.x = -1;
+cube4.position.z = -1;
+group.add(cube4);
+
+const cube5 = cube.clone();
+cube5.position.x = 1;
+cube5.position.z = 1;
+group.add(cube5);
+
+//const cube2 = new THREE.Mesh(geometry, material);
+//const cube2 = new THREE.Mesh(geometry, material);
+//cube2.castShadow = cube2.receiveShadow = true;
+//group.add(cube2);
+//const cube3 = new THREE.Mesh(geometry, material);
+//cube3.castShadow = cube3.receiveShadow = true;
+//group.add(cube3);
+
 scene.add(group);
 
 const directionalLight = new THREE.DirectionalLight( 0xffffff, .5 );
@@ -41,7 +65,7 @@ renderer.setClearColor(0xffffff,1);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const loopDuration = 1;
+const loopDuration = 2;
 
 function InOutQuint(t) {
   if ((t *= 2) < 1) return 0.5 * t * t * t * t * t;
@@ -52,14 +76,19 @@ function draw(startTime) {
 
   const time = ( .001 * (performance.now()-startTime) ) % loopDuration;
   const t = time * 2 * Math.PI / loopDuration;
-  const f = .75 + .25 * InOutQuint( .5 + .5 * Math.sin( t ));
+  const f = .75 + .25 * InOutQuint( 0.5 * Math.sin( t ));
   const f2 = 1 + 2 * InOutQuint( .5 + .5 * Math.cos( t ));
 
-  cube.scale.set(f,f2,f);
-  cube2.scale.set(f2,f,f);
-  cube3.scale.set(f,f,f2);
+  //cube.scale.set(f,f,f);
+  //cube2.scale.set(f2,f,f);
+  //cube3.scale.set(f,f,f2);
 
-  group.rotation.y = Math.PI / 2 * InOutQuint( time / loopDuration );
+  cube.rotation.y = Math.PI / 2 * InOutQuint( time / loopDuration );
+  cube2.rotation.y = Math.PI / 2 * InOutQuint( .5 + .5 * Math.cos( t ));
+  cube3.rotation.y = -Math.PI / 2 * InOutQuint( .5 + .5 * Math.cos( t ));
+
+    //cube4.position.y = Easings.InOutCubic(Math.sin( t / 4 ));
+
 
   renderer.render(scene, camera);
 }

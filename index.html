@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
-    <link href="https://fonts.googleapis.com/css?family=Krona+One|Open+Sans" rel="stylesheet">
 
   </head>
   <body>
     <header>
       <h1>Looper</h1>
-      <h2>A tool to create looperinos · <a href="https://github.com/spite/looper" >GitHub</a> | <b>Chrome and Safari Tech Preview only</b></h2>
-      <div class="recordPanel">
+      <h2>A tool to create looperinos</h2>
+      <div class="recordPanel" style="display: none;">
         <a href="#" class="btn orange" id="start">Record</a>
       </div>
     </header>
+    <main />
 
 <script src="js/CCapture.all.min.js"></script>
 
@@ -24,19 +24,22 @@
 
 'use strict';
 
+let mainElement;
+
 async function loadModule() {
   const num = window.location.hash.substr(1) || 1;
   const module = await import(`./loops/${num}.js`);
-  document.body.appendChild(module.canvas);
+  mainElement.appendChild(module.canvas);
   return module;
 }
 
 async function init() {
+  mainElement = document.querySelector('main');
   let module = await loadModule();
 
   async function reload() {
     if (module && module.canvas) {
-      document.body.removeChild(module.canvas);
+      mainElement.removeChild(module.canvas);
     }
     module = await loadModule();
   }
